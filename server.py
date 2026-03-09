@@ -136,6 +136,22 @@ def get_tasks(week: str = Query(None), mode: str = Query("work")):
     return [task_to_dict(r) for r in rows]
 
 
+@app.get("/api/tasks/{task_id}")
+def get_task(task_id: int):
+    with get_db() as conn:
+        row = conn.execute(
+            """SELECT t.*, COALESCE(c.cnt, 0) as comment_count
+            FROM tasks t
+            LEFT JOIN (SELECT task_id, COUNT(*) as cnt FROM comments GROUP BY task_id) c
+              ON t.id = c.task_id
+            WHERE t.id = ?""",
+            (task_id,),
+        ).fetchone()
+    if not row:
+        raise HTTPException(404, "Task not found")
+    return task_to_dict(row)
+
+
 @app.post("/api/tasks", status_code=201)
 async def create_task(request: Request):
     data = await request.json()

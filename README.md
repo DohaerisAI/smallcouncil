@@ -40,7 +40,7 @@ Every step is an API call. Every action shows up on the board. No black boxes.
 git clone https://github.com/YOUR_USERNAME/small-council.git
 cd small-council
 python3 -m venv .venv && source .venv/bin/activate
-pip install fastapi uvicorn
+pip install fastapi uvicorn fastmcp
 python server.py
 ```
 
@@ -48,86 +48,107 @@ Open `http://localhost:8089`. Done.
 
 ---
 
-## Wire Up Your Agents
+## Connect Your Agents
 
-The only file that matters is `agent-rules.md`. Copy it where your agent reads instructions.
+Two ways to wire up: **MCP Server** (auto-discovery, recommended) or **Agent Rules** (copy a file).
 
-### Claude Code
+### Option A: MCP Server
+
+Install the dependency, then add the server to your agent's MCP config.
 
 ```bash
+pip install fastmcp
+```
+
+**Claude Code** — `~/.claude.json`:
+```json
+{
+  "mcpServers": {
+    "small-council": {
+      "command": "python3",
+      "args": ["/path/to/small-council/mcp_server.py"]
+    }
+  }
+}
+```
+
+**Cursor** — `.cursor/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "small-council": {
+      "command": "python3",
+      "args": ["/path/to/small-council/mcp_server.py"]
+    }
+  }
+}
+```
+
+**Windsurf** — `~/.codeium/windsurf/mcp_config.json`:
+```json
+{
+  "mcpServers": {
+    "small-council": {
+      "command": "python3",
+      "args": ["/path/to/small-council/mcp_server.py"]
+    }
+  }
+}
+```
+
+**Claude Desktop** — `claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "small-council": {
+      "command": "python3",
+      "args": ["/path/to/small-council/mcp_server.py"]
+    }
+  }
+}
+```
+
+**HTTP mode** (for remote agents):
+```bash
+python3 mcp_server.py --http
+# Serves on http://localhost:8090
+```
+
+#### MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `check_queue` | Get unclaimed agent tasks |
+| `claim_task` | Claim a task → inprogress + artifacts dir |
+| `get_task` | Full task details + comments + artifacts |
+| `list_tasks` | All tasks for a week |
+| `create_task` | Create a new task |
+| `update_task` | Update status, title, priority, etc. |
+| `add_comment` | Post plan / log / review / blocker comment |
+| `complete_task` | Summary + move to review + log activity |
+
+### Option B: Agent Rules
+
+Copy `agent-rules.md` where your agent reads instructions. It contains the full workflow and all REST endpoints.
+
+```bash
+# Claude Code (global)
 cp agent-rules.md ~/.claude/rules/common/small-council.md
-```
 
-Claude now sees the board in every project. It will check the queue, claim tasks, write plans, post progress, and deliver artifacts automatically.
-
-Project-specific instead:
-```bash
+# Claude Code (project-specific)
 cp agent-rules.md /path/to/project/.claude/rules/small-council.md
-```
 
-### OpenAI Codex
+# Cursor
+cp agent-rules.md /path/to/project/.cursor/rules/small-council.md
 
-```bash
+# Windsurf
+cp agent-rules.md /path/to/project/.windsurfrules/small-council.md
+
+# OpenAI Codex
 cat agent-rules.md >> /path/to/project/AGENTS.md
 ```
 
-Or paste `agent-rules.md` contents into the Codex system prompt.
-
-### Cursor
-
-```bash
-cp agent-rules.md /path/to/project/.cursor/rules/small-council.md
-```
-
-### Windsurf
-
-```bash
-cp agent-rules.md /path/to/project/.windsurfrules/small-council.md
-```
-
-### Any Agent
-
-It's a REST API. If your agent can `curl`, it can participate. See `agent-rules.md` for the full workflow and all endpoints.
-
----
-
-## The Agent Workflow
-
-What an agent does when it picks up work:
-
-```bash
-# 1. Check for available tasks
-curl -s http://localhost:8089/api/tasks/agent-queue
-
-# 2. Claim one (sets status → inprogress, creates artifacts dir)
-curl -s -X POST http://localhost:8089/api/tasks/:id/claim \
-  -H 'Content-Type: application/json' \
-  -d '{"author": "claude"}'
-
-# 3. Write plan → post as comment
-curl -s -X POST http://localhost:8089/api/tasks/:id/comments \
-  -H 'Content-Type: application/json' \
-  -d '{"author": "claude", "content": "Plan: ...", "type": "plan"}'
-
-# 4. Do the work...
-
-# 5. Log progress
-curl -s -X POST http://localhost:8089/api/tasks/:id/comments \
-  -H 'Content-Type: application/json' \
-  -d '{"author": "claude", "content": "Done. Output at ./result.json", "type": "log"}'
-
-# 6. Register artifacts
-curl -s -X POST http://localhost:8089/api/tasks/:id/artifacts \
-  -H 'Content-Type: application/json' \
-  -d '{"path": "/path/to/output.json"}'
-
-# 7. Move to review
-curl -s -X PUT http://localhost:8089/api/tasks/:id \
-  -H 'Content-Type: application/json' \
-  -d '{"status": "review"}'
-```
-
-Artifacts live in `~/.claude/board-artifacts/{task-id}/` — auto-created on claim, auto-discovered by the board.
+Works with any agent that can `curl` — it's just a REST API.
 
 ---
 
@@ -145,29 +166,6 @@ Artifacts live in `~/.claude/board-artifacts/{task-id}/` — auto-created on cla
 - **Liquid glass UI** — glassmorphism, dark/light themes
 - **Drag and drop** — move cards between columns
 - **Calendar picker** — jump to any week
-
----
-
-## API Reference
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/tasks?week=YYYY_wNN&mode=work` | GET | Get tasks for a week |
-| `/api/tasks` | POST | Create task |
-| `/api/tasks/:id` | PUT | Update task |
-| `/api/tasks/:id` | DELETE | Delete task |
-| `/api/tasks/agent-queue` | GET | Unclaimed agent tasks |
-| `/api/tasks/:id/claim` | POST | Claim task `{author: "claude"}` |
-| `/api/tasks/:id/comments` | GET/POST | Comment thread |
-| `/api/tasks/:id/artifacts` | GET/POST | Task artifacts |
-| `/api/weeks?mode=work` | GET | List weeks |
-| `/api/weeks/next` | POST | Carry over incomplete tasks |
-| `/api/activity` | GET/POST | Activity feed |
-| `/api/activity/counts` | GET | Heatmap data |
-| `/api/activity/streak` | GET | Current streak |
-| `/api/settings` | GET/PUT | Project settings |
-
-Week key format: `YYYY_wNN` (ISO week — `date +%G_w%V`).
 
 ---
 
@@ -214,7 +212,6 @@ python -m unittest test_board.py -v
 ## Upcoming
 
 - **Review Protocol** — diff viewer for agent changes, artifact previews inside the board, and approval gates so agents can't move past review without human sign-off
-- **MCP Server** — Small Council as an MCP tool so any compatible agent discovers the board automatically via protocol — no more copying `agent-rules.md`, just add the server URL
 
 ---
 
