@@ -28,6 +28,22 @@
     --radius-sm: 0.375rem;
     --radius-md: 0.5rem;
     --radius-lg: 0.75rem;
+    /* Glass variables */
+    --glass-bg: rgba(34, 33, 32, 0.65);
+    --glass-bg-heavy: rgba(34, 33, 32, 0.80);
+    --glass-bg-light: rgba(34, 33, 32, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-border-accent: rgba(255, 255, 255, 0.12);
+    --glass-shadow: rgba(0, 0, 0, 0.25);
+    --glass-shadow-hover: rgba(0, 0, 0, 0.35);
+    --glass-blur: 12px;
+    --glass-blur-light: 8px;
+    --body-gradient-start: #1A1918;
+    --body-gradient-mid: #1F1E1C;
+    --body-gradient-end: #181716;
+    --body-accent-orb: rgba(224, 138, 109, 0.04);
+    --input-bg: #2A2928;
+    --input-border: #3E3C3A;
   }
 
   /* Small Council Light Theme - Warm Minimalist */
@@ -50,35 +66,58 @@
     --chart-6: #7A8858;
     --chart-7: #876B80;
     --chart-8: #8A7055;
+    /* Glass variables - light */
+    --glass-bg: rgba(255, 255, 255, 0.50);
+    --glass-bg-heavy: rgba(255, 255, 255, 0.68);
+    --glass-bg-light: rgba(255, 255, 255, 0.35);
+    --glass-border: rgba(0, 0, 0, 0.06);
+    --glass-border-accent: rgba(0, 0, 0, 0.10);
+    --glass-shadow: rgba(0, 0, 0, 0.05);
+    --glass-shadow-hover: rgba(0, 0, 0, 0.10);
+    --body-gradient-start: #F2F0ED;
+    --body-gradient-mid: #EBE8E4;
+    --body-gradient-end: #EEECe8;
+    --body-accent-orb: rgba(217, 119, 87, 0.06);
+    --input-bg: #FFFFFF;
+    --input-border: #DDD9D5;
   }
 
   /* Personal Mode - Teal accent override */
   .personal-mode {
     --accent: #7DBAA3;
     --accent-glow: rgba(125, 186, 163, 0.12);
+    --body-accent-orb: rgba(125, 186, 163, 0.06);
   }
   .personal-mode.light-theme {
     --accent: #5B8C78;
     --accent-glow: rgba(91, 140, 120, 0.08);
+    --body-accent-orb: rgba(91, 140, 120, 0.05);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg-primary);
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, var(--body-accent-orb), transparent),
+      radial-gradient(ellipse 60% 50% at 80% 80%, var(--body-accent-orb), transparent),
+      linear-gradient(160deg, var(--body-gradient-start), var(--body-gradient-mid), var(--body-gradient-end));
+    background-attachment: fixed;
     color: var(--text-primary);
     min-height: 100vh;
     transition: background 0.3s, color 0.3s;
   }
 
   .header {
-    background: var(--bg-secondary);
+    background: var(--glass-bg-heavy);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     padding: 16px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid var(--border);
+    border-bottom: 1px solid var(--glass-border-accent);
+    box-shadow: 0 1px 8px var(--glass-shadow);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -91,7 +130,7 @@
     display: flex; align-items: center; gap: 8px; margin-top: 4px;
   }
   .week-nav-btn {
-    background: transparent; border: 1px solid var(--border); color: var(--text-secondary);
+    background: transparent; border: 1px solid var(--glass-border-accent); color: var(--text-secondary);
     width: 28px; height: 28px; border-radius: 6px; cursor: pointer;
     font-size: 14px; display: flex; align-items: center; justify-content: center;
     transition: all 0.15s;
@@ -116,9 +155,11 @@
   .calendar-picker {
     display: none; position: absolute; top: 100%; left: 50%;
     transform: translateX(-50%); z-index: 150;
-    background: var(--bg-secondary); border: 1px solid var(--border);
+    background: var(--glass-bg-heavy); border: 1px solid var(--glass-border-accent);
     border-radius: 12px; padding: 16px; min-width: 280px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 24px var(--glass-shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     margin-top: 8px;
   }
   .calendar-picker.show { display: block; }
@@ -130,7 +171,7 @@
     font-size: 14px; font-weight: 600; color: var(--text-primary);
   }
   .cal-nav-btn {
-    background: transparent; border: 1px solid var(--border); color: var(--text-secondary);
+    background: transparent; border: 1px solid var(--glass-border-accent); color: var(--text-secondary);
     width: 28px; height: 28px; border-radius: 6px; cursor: pointer;
     font-size: 14px; display: flex; align-items: center; justify-content: center;
     transition: all 0.15s;
@@ -173,7 +214,7 @@
 
   .icon-btn {
     background: transparent;
-    border: 1px solid var(--border);
+    border: 1px solid var(--glass-border-accent);
     color: var(--text-secondary);
     padding: 6px 12px;
     border-radius: 8px;
@@ -190,7 +231,7 @@
   /* Mode toggle */
   .mode-toggle {
     background: transparent;
-    border: 1px solid var(--border);
+    border: 1px solid var(--glass-border-accent);
     color: var(--text-secondary);
     padding: 6px 12px;
     border-radius: 8px;
@@ -213,12 +254,14 @@
   .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--chart-2)); border-radius: 3px; transition: width 0.5s; }
 
   .toolbar {
-    background: var(--bg-secondary);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur-light));
+    -webkit-backdrop-filter: blur(var(--glass-blur-light));
     padding: 10px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--glass-border);
     flex-wrap: wrap;
     gap: 8px;
   }
@@ -228,8 +271,10 @@
   .filter-btn {
     padding: 6px 14px;
     border-radius: 20px;
-    border: 1px solid var(--border);
-    background: transparent;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg-light);
+    backdrop-filter: blur(var(--glass-blur-light));
+    -webkit-backdrop-filter: blur(var(--glass-blur-light));
     color: var(--text-secondary);
     cursor: pointer;
     font-size: 13px;
@@ -240,6 +285,8 @@
     background: var(--accent);
     color: #fff;
     border-color: var(--accent);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .board {
@@ -254,8 +301,10 @@
   .column {
     min-width: 280px;
     max-width: 280px;
-    background: var(--bg-secondary);
+    background: var(--glass-bg-light);
+    border: 1px solid var(--glass-border);
     border-radius: 12px;
+    box-shadow: 0 1px 4px var(--glass-shadow);
     flex-shrink: 0;
     transition: background 0.3s;
     display: flex;
@@ -275,7 +324,8 @@
   }
 
   .column-header .count {
-    background: var(--border);
+    background: var(--glass-bg-light);
+    border: 1px solid var(--glass-border);
     padding: 2px 10px;
     border-radius: 12px;
     font-size: 12px;
@@ -292,19 +342,23 @@
   .column-body { padding: 10px; min-height: 100px; flex: 1; }
 
   .card {
-    background: var(--bg-card);
+    background: var(--glass-bg-light);
+    backdrop-filter: blur(var(--glass-blur-light));
+    -webkit-backdrop-filter: blur(var(--glass-blur-light));
     border-radius: 8px;
     padding: 12px;
     margin-bottom: 8px;
     cursor: pointer;
     border-left: 4px solid transparent;
     transition: all 0.2s;
-    border: 1px solid var(--border);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 2px 8px var(--glass-shadow);
   }
 
   .card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    border-color: var(--glass-border-accent);
+    box-shadow: 0 6px 16px var(--glass-shadow-hover);
   }
 
   .card.dragging { opacity: 0.4; }
@@ -322,43 +376,7 @@
   .due-overdue { background: rgba(220, 85, 71, 0.2) !important; color: var(--destructive) !important; }
   .due-today { background: rgba(217, 119, 87, 0.2) !important; color: var(--accent) !important; }
 
-  /* Work project colors */
-  .project-dragon { border-left-color: var(--chart-2) !important; }
-  .project-raven { border-left-color: var(--chart-1) !important; }
-  .project-titan { border-left-color: var(--chart-3) !important; }
-  .project-shadow { border-left-color: var(--chart-5) !important; }
-  .project-crown { border-left-color: var(--chart-7) !important; }
-
-  .project-dragon .project-tag { background: rgba(91, 140, 120, 0.2); color: var(--chart-2); }
-  .project-raven .project-tag { background: rgba(232, 149, 111, 0.2); color: var(--chart-1); }
-  .project-titan .project-tag { background: rgba(212, 168, 92, 0.2); color: var(--chart-3); }
-  .project-shadow .project-tag { background: rgba(143, 164, 181, 0.2); color: var(--chart-5); }
-  .project-crown .project-tag { background: rgba(173, 142, 165, 0.2); color: var(--chart-7); }
-
-  .light-theme .project-dragon .project-tag { background: rgba(91, 140, 120, 0.15); color: #4a7a66; }
-  .light-theme .project-raven .project-tag { background: rgba(217, 119, 87, 0.15); color: #b85f3d; }
-  .light-theme .project-titan .project-tag { background: rgba(181, 134, 62, 0.15); color: #8a6520; }
-  .light-theme .project-shadow .project-tag { background: rgba(107, 127, 142, 0.15); color: #566a78; }
-  .light-theme .project-crown .project-tag { background: rgba(135, 107, 128, 0.15); color: #6e5568; }
-
-  /* Personal project colors */
-  .project-learning { border-left-color: var(--chart-5) !important; }
-  .project-sideproject { border-left-color: var(--chart-6) !important; }
-  .project-health { border-left-color: var(--chart-2) !important; }
-  .project-finance { border-left-color: var(--chart-3) !important; }
-  .project-home { border-left-color: var(--chart-8) !important; }
-
-  .project-learning .project-tag { background: rgba(143, 164, 181, 0.2); color: var(--chart-5); }
-  .project-sideproject .project-tag { background: rgba(160, 173, 120, 0.2); color: var(--chart-6); }
-  .project-health .project-tag { background: rgba(125, 186, 163, 0.2); color: var(--chart-2); }
-  .project-finance .project-tag { background: rgba(212, 168, 92, 0.2); color: var(--chart-3); }
-  .project-home .project-tag { background: rgba(184, 156, 119, 0.2); color: var(--chart-8); }
-
-  .light-theme .project-learning .project-tag { background: rgba(107, 127, 142, 0.15); color: #566a78; }
-  .light-theme .project-sideproject .project-tag { background: rgba(122, 136, 88, 0.15); color: #5e6e3a; }
-  .light-theme .project-health .project-tag { background: rgba(91, 140, 120, 0.15); color: #4a7a66; }
-  .light-theme .project-finance .project-tag { background: rgba(181, 134, 62, 0.15); color: #8a6520; }
-  .light-theme .project-home .project-tag { background: rgba(138, 112, 85, 0.15); color: #6e5538; }
+  /* Project colors are assigned dynamically via JS using --project-color */
 
   .card .title { font-size: 13px; font-weight: 500; margin-bottom: 8px; line-height: 1.4; }
 
@@ -410,9 +428,23 @@
     padding: 3px 0; color: var(--text-secondary); cursor: pointer;
   }
   .subtask input[type="checkbox"] {
-    accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer;
+    -webkit-appearance: none; appearance: none;
+    width: 15px; height: 15px; cursor: pointer; flex-shrink: 0;
+    border: 1.5px solid var(--glass-border-accent); border-radius: 4px;
+    background: var(--glass-bg-light); position: relative;
+    transition: all 0.15s;
   }
-  .subtask.checked span { text-decoration: line-through; opacity: 0.6; }
+  .subtask input[type="checkbox"]:checked {
+    background: var(--accent); border-color: var(--accent);
+  }
+  .subtask input[type="checkbox"]:checked::after {
+    content: ''; position: absolute; left: 4px; top: 1px;
+    width: 4px; height: 8px;
+    border: solid #fff; border-width: 0 1.5px 1.5px 0;
+    transform: rotate(45deg);
+  }
+  .subtask input[type="checkbox"]:hover { border-color: var(--accent); }
+  .subtask.checked span { text-decoration: line-through; opacity: 0.5; }
   .subtask-progress {
     font-size: 10px; color: var(--text-secondary); margin-top: 4px;
   }
@@ -430,55 +462,124 @@
   }
   .notes-toggle:hover { text-decoration: underline; }
 
-  /* Edit button in meta row */
-  .card-expand {
-    background: none; border: none; color: var(--text-secondary);
-    cursor: pointer; font-size: 13px; padding: 2px 4px;
-    opacity: 0.5; transition: all 0.15s; border-radius: 4px;
-    margin-left: 6px;
-  }
-  .card:hover .card-expand { opacity: 1; }
-  .card-expand:active { transform: scale(0.9); }
-  .card-expand:hover { color: var(--accent); background: var(--accent-glow); }
+  /* Edit button hidden - card click opens edit */
+  .card-expand { display: none; }
 
   /* Modal */
   .modal-overlay {
     display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.6); z-index: 200;
+    background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    z-index: 200;
     justify-content: center; align-items: center;
   }
   .modal-overlay.show { display: flex; }
 
   .modal {
-    background: var(--bg-secondary); border-radius: 12px; padding: 24px;
-    width: 560px; max-width: 90vw; max-height: 85vh; overflow-y: auto;
-    border: 1px solid var(--border);
+    background: var(--glass-bg-heavy); border-radius: 14px; padding: 28px;
+    width: 640px; max-width: 92vw; max-height: 88vh; overflow-y: auto;
+    border: 1px solid var(--glass-border-accent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px var(--glass-shadow);
   }
 
   .modal h2 { font-size: 18px; margin-bottom: 16px; color: var(--accent); }
-  .modal label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; margin-top: 12px; }
   .modal input, .modal select, .modal textarea {
-    width: 100%; padding: 8px 12px; border-radius: 6px;
-    border: 1px solid var(--border); background: var(--bg-primary);
+    width: 100%; padding: 10px 12px; border-radius: 8px;
+    border: 1px solid var(--input-border); background: var(--input-bg);
     color: var(--text-primary); font-size: 13px; font-family: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+  .modal input:focus, .modal select:focus, .modal textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .modal select {
+    -webkit-appearance: none; appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239B9895' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+  .modal select option {
+    background: var(--input-bg); color: var(--text-primary);
+    padding: 8px;
   }
   .modal textarea { resize: vertical; min-height: 60px; }
+  .modal label {
+    display: block; font-size: 12px; color: var(--text-secondary);
+    margin-bottom: 5px; margin-top: 14px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  /* Settings project row */
+  .settings-project-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; margin-bottom: 6px;
+    background: var(--glass-bg-light); border: 1px solid var(--glass-border);
+    border-radius: 10px; transition: border-color 0.15s;
+  }
+  .settings-project-row:hover { border-color: var(--glass-border-accent); }
+  .settings-color-dot {
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+    cursor: pointer; border: 2px solid var(--glass-border-accent);
+    position: relative; overflow: hidden; transition: border-color 0.15s;
+  }
+  .settings-color-dot:hover { border-color: var(--accent); }
+  .settings-color-dot input[type="color"] {
+    position: absolute; inset: -8px; width: 150%; height: 150%;
+    cursor: pointer; border: none; padding: 0; background: none;
+  }
+  .settings-project-key {
+    font-size: 11px; color: var(--text-secondary); font-family: monospace;
+    min-width: 70px; letter-spacing: 0.3px;
+  }
+  .settings-label-input {
+    flex: 1; padding: 6px 10px; font-size: 13px;
+    background: transparent !important; border: 1px solid transparent !important;
+    border-radius: 6px; color: var(--text-primary);
+    transition: all 0.15s; outline: none;
+  }
+  .settings-label-input:focus {
+    background: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+  }
+  .settings-remove-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: 1px solid transparent;
+    color: var(--text-secondary); cursor: pointer; font-size: 13px;
+    transition: all 0.15s; flex-shrink: 0; padding: 0;
+  }
+  .settings-remove-btn:hover {
+    background: rgba(220, 85, 71, 0.1); border-color: rgba(220, 85, 71, 0.3);
+    color: var(--destructive);
+  }
+  .settings-add-row {
+    display: flex; gap: 8px; margin-top: 14px; align-items: center;
+    padding: 10px 12px; border: 1px dashed var(--glass-border-accent);
+    border-radius: 10px; background: transparent;
+  }
   .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
   .btn-primary {
-    padding: 8px 20px; border-radius: 6px; border: none;
+    padding: 9px 22px; border-radius: 8px; border: none;
     background: var(--accent); color: #fff; cursor: pointer;
-    font-size: 13px; font-weight: 600;
+    font-size: 13px; font-weight: 600; transition: all 0.15s;
   }
-  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
   .btn-secondary {
-    padding: 8px 20px; border-radius: 6px; border: 1px solid var(--border);
-    background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 13px;
+    padding: 9px 22px; border-radius: 8px; border: 1px solid var(--glass-border-accent);
+    background: var(--glass-bg-light); color: var(--text-secondary);
+    cursor: pointer; font-size: 13px; transition: all 0.15s;
   }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
   /* Comments thread in edit modal */
   .comment-thread {
     margin-top: 12px; max-height: 250px; overflow-y: auto;
-    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--glass-bg-light);
+    border: 1px solid var(--glass-border); border-radius: 8px;
     padding: 8px;
   }
   .comment-item {
@@ -527,8 +628,11 @@
 
   /* Burndown */
   .burndown-section {
-    display: none; background: var(--bg-secondary); margin: 0 24px 16px;
-    border-radius: 12px; padding: 20px; border: 1px solid var(--border);
+    display: none; background: var(--glass-bg); margin: 0 24px 16px;
+    border-radius: 12px; padding: 20px; border: 1px solid var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur-light));
+    -webkit-backdrop-filter: blur(var(--glass-blur-light));
+    box-shadow: 0 2px 12px var(--glass-shadow);
   }
   .burndown-section.show { display: block; }
   .burndown-section h3 { font-size: 15px; color: var(--accent); margin-bottom: 16px; }
@@ -542,9 +646,12 @@
   /* Export toast */
   .toast {
     position: fixed; bottom: 24px; right: 24px;
-    background: var(--chart-2); color: #fff; padding: 12px 20px;
+    background: rgba(125,186,163,0.85); color: #fff; padding: 12px 20px;
     border-radius: 8px; font-size: 14px; display: none; z-index: 300;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 4px 16px var(--glass-shadow);
   }
   .toast.show { display: block; animation: fadeInUp 0.3s ease; }
 
@@ -555,8 +662,11 @@
 
   /* Activity Panel */
   .activity-section {
-    display: none; background: var(--bg-secondary); margin: 0 24px 16px;
-    border-radius: 12px; padding: 20px; border: 1px solid var(--border);
+    display: none; background: var(--glass-bg); margin: 0 24px 16px;
+    border-radius: 12px; padding: 20px; border: 1px solid var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur-light));
+    -webkit-backdrop-filter: blur(var(--glass-blur-light));
+    box-shadow: 0 2px 12px var(--glass-shadow);
   }
   .activity-section.show { display: block; }
   .activity-section h3 { font-size: 15px; color: var(--accent); margin-bottom: 16px; }
@@ -585,7 +695,9 @@
 
   .heatmap-tooltip {
     display: none; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-primary);
+    background: var(--glass-bg-heavy); border: 1px solid var(--glass-border); color: var(--text-primary);
+    backdrop-filter: blur(var(--glass-blur-light));
+    -webkit-backdrop-filter: blur(var(--glass-blur-light));
     padding: 4px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap; z-index: 10;
     pointer-events: none;
   }
@@ -648,10 +760,13 @@
     padding: 4px 12px; border-radius: 20px;
     background: rgba(224, 138, 109, 0.15); color: var(--accent);
     font-size: 13px; font-weight: 600;
+    backdrop-filter: blur(var(--glass-blur-light));
+    -webkit-backdrop-filter: blur(var(--glass-blur-light));
+    border: 1px solid var(--glass-border);
   }
   .streak-fire { font-size: 16px; }
 
-  /\* Subtle scrollbars \*/
+  /* Subtle scrollbars */
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: rgba(155, 152, 149, 0.2); border-radius: 4px; }
@@ -670,6 +785,39 @@
   .file-chip-json::before { content: "\1F4CA "; }
   .file-chip-txt::before { content: "\1F4C4 "; }
   .file-chip-default::before { content: "\1F4CE "; }
+
+  /* Fallback for browsers without backdrop-filter */
+  @supports not (backdrop-filter: blur(1px)) {
+    .header { background: var(--bg-secondary); }
+    .toolbar { background: var(--bg-secondary); }
+    .card { background: var(--bg-card); }
+    .modal { background: var(--bg-secondary); }
+    .calendar-picker { background: var(--bg-secondary); }
+    .burndown-section { background: var(--bg-secondary); }
+    .activity-section { background: var(--bg-secondary); }
+    .filter-btn { background: transparent; }
+    .toast { background: var(--chart-2); }
+  }
+
+  /* Reduced transparency preference */
+  @media (prefers-reduced-transparency: reduce) {
+    :root {
+      --glass-bg: rgba(34, 33, 32, 0.95);
+      --glass-bg-heavy: rgba(34, 33, 32, 0.98);
+      --glass-bg-light: rgba(34, 33, 32, 0.90);
+    }
+    .light-theme {
+      --glass-bg: rgba(255, 255, 255, 0.95);
+      --glass-bg-heavy: rgba(255, 255, 255, 0.98);
+      --glass-bg-light: rgba(255, 255, 255, 0.90);
+    }
+    .header, .toolbar, .card, .modal, .calendar-picker,
+    .burndown-section, .activity-section, .filter-btn,
+    .toast, .streak-badge, .heatmap-tooltip, .modal-overlay {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
 
   @media (max-width: 768px) {
     .board { flex-direction: column; }
@@ -723,12 +871,12 @@
   </div>
   <div class="header-actions">
     <button class="mode-toggle" id="btnMode" title="Switch between Work and Personal boards">Work</button>
-    <button class="btn-new-week" id="btnNewWeek" title="Start next week, carry over incomplete tasks">Next Week &rarr;</button>
     <button class="icon-btn" id="btnAddTask" title="Add Task">+ Add Task</button>
     <button class="icon-btn" id="btnActivity" title="Activity & Heatmap">Activity</button>
     <button class="icon-btn" id="btnBurndown" title="Burndown Chart">Burndown</button>
     <button class="icon-btn" id="btnExport" title="Export Markdown">Export MD</button>
     <button class="icon-btn" id="btnTheme" title="Toggle Theme">Light</button>
+    <button class="icon-btn" id="btnSettings" title="Settings">&#9881;</button>
   </div>
 </div>
 
@@ -844,7 +992,7 @@
 <!-- Edit Task Modal -->
 <div class="modal-overlay" id="editTaskModal">
   <div class="modal">
-    <h2>Edit Task</h2>
+    <h2>Edit Task <span id="editIdDisplay" style="font-size:14px;color:var(--text-secondary);font-weight:400;"></span></h2>
     <input type="hidden" id="editId">
     <label>Title</label>
     <input type="text" id="editTitle">
@@ -909,6 +1057,30 @@
   </div>
 </div>
 
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal" style="max-width:480px;">
+    <h2>Settings</h2>
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button class="filter-btn active" id="settingsWorkTab" data-tab="work">Work Projects</button>
+      <button class="filter-btn" id="settingsPersonalTab" data-tab="personal">Personal Projects</button>
+    </div>
+    <div id="settingsProjectList"></div>
+    <div class="settings-add-row">
+      <div class="settings-color-dot" style="background:#7DBAA3;">
+        <input type="color" id="settingsNewColor" value="#7DBAA3">
+      </div>
+      <input type="text" id="settingsNewKey" placeholder="key (no spaces)" style="flex:1;text-transform:lowercase;">
+      <input type="text" id="settingsNewLabel" placeholder="Display name" style="flex:1;">
+      <button class="btn-primary" id="btnAddProject" style="padding:8px 14px;">Add</button>
+    </div>
+    <div class="modal-actions" style="margin-top:20px;">
+      <button class="btn-secondary" id="btnCancelSettings">Cancel</button>
+      <button class="btn-primary" id="btnSaveSettings">Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -920,17 +1092,88 @@ const today = new Date();
 const dayOfWeek = today.getDay();
 const todayName = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dayOfWeek];
 
-// ── Project lists per mode ──
-const PROJECTS = {
+// ── Project lists per mode (loaded from API) ──
+// Structure: { work: { key: { label, color } }, personal: { ... } }
+const DEFAULT_PALETTE = ["#7DBAA3","#E8956F","#D4A85C","#8FA4B5","#AD8EA5","#A0AD78","#B89C77","#C98888"];
+
+let PROJECTS = {
   work: {
-    dragon: "Dragon", raven: "Raven", titan: "Titan", shadow: "Shadow", crown: "Crown"
+    dragon: { label: "Dragon", color: "#7DBAA3" },
+    raven: { label: "Raven", color: "#E8956F" },
+    titan: { label: "Titan", color: "#D4A85C" },
+    shadow: { label: "Shadow", color: "#8FA4B5" },
+    crown: { label: "Crown", color: "#AD8EA5" },
   },
   personal: {
-    learning: "Learning", sideproject: "Side Projects", health: "Health",
-    finance: "Finance", home: "Home"
+    learning: { label: "Learning", color: "#8FA4B5" },
+    sideproject: { label: "Side Projects", color: "#A0AD78" },
+    health: { label: "Health", color: "#7DBAA3" },
+    finance: { label: "Finance", color: "#D4A85C" },
+    home: { label: "Home", color: "#B89C77" },
   }
 };
 const ownerLabels = { me: "Me", agent: "Agent", team: "Team" };
+
+// Normalize legacy format (string label) to {label, color}
+function normalizeProjects(projects) {
+  const result = {};
+  for (const mode of ["work", "personal"]) {
+    result[mode] = {};
+    const entries = Object.entries(projects[mode] || {});
+    entries.forEach(([key, val], i) => {
+      if (typeof val === "string") {
+        result[mode][key] = { label: val, color: DEFAULT_PALETTE[i % DEFAULT_PALETTE.length] };
+      } else {
+        result[mode][key] = { label: val.label || key, color: val.color || DEFAULT_PALETTE[i % DEFAULT_PALETTE.length] };
+      }
+    });
+  }
+  return result;
+}
+
+function getProjectNames() {
+  const mode = PROJECTS[currentMode] || {};
+  const flat = {};
+  for (const [key, val] of Object.entries(mode)) {
+    flat[key] = val.label || key;
+  }
+  return flat;
+}
+
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
+  return `${r}, ${g}, ${b}`;
+}
+
+function injectProjectStyles() {
+  let existing = document.getElementById("dynamic-project-styles");
+  if (existing) existing.remove();
+  const style = document.createElement("style");
+  style.id = "dynamic-project-styles";
+  let css = "";
+  for (const mode of ["work", "personal"]) {
+    for (const [key, val] of Object.entries(PROJECTS[mode] || {})) {
+      const hex = val.color || DEFAULT_PALETTE[0];
+      const rgb = hexToRgb(hex);
+      css += `.project-${key} { border-left-color: ${hex} !important; }\n`;
+      css += `.project-${key} .project-tag { background: rgba(${rgb}, 0.2); color: ${hex}; }\n`;
+    }
+  }
+  style.textContent = css;
+  document.head.appendChild(style);
+}
+
+async function loadSettings() {
+  try {
+    const settings = await api("GET", "/api/settings");
+    if (settings.projects) PROJECTS = normalizeProjects(settings.projects);
+    injectProjectStyles();
+  } catch (e) {
+    injectProjectStyles();
+  }
+}
 
 // ── State ──
 let currentMonday = getMonday(today);
@@ -987,7 +1230,7 @@ function getDayDates(monday) {
   return dates;
 }
 
-function getProjectNames() { return PROJECTS[currentMode]; }
+// getProjectNames defined above with loadSettings
 
 // ── Mode system ──
 function updateModeUI() {
@@ -1265,7 +1508,6 @@ function updateWeekUI() {
   document.getElementById("btnCurrentWeek").style.display = isCurrentWeek ? "none" : "inline-block";
   const isPersonal = currentMode === "personal";
   document.title = `${isPersonal ? "The Realm" : "Small Council"} - ${label}`;
-  document.getElementById("btnNewWeek").style.display = viewingMonday > currentMonday ? "none" : "flex";
 }
 
 // ── Start Next Week ──
@@ -1328,6 +1570,7 @@ document.getElementById("btnConfirmAdd").addEventListener("click", async () => {
   logActivity("created", newTask);
   document.getElementById("addTaskModal").classList.remove("show");
   render();
+  showToast(`Task #${newTask.id} created`);
   if (document.getElementById("activitySection").classList.contains("show")) renderActivity();
 });
 
@@ -1336,6 +1579,7 @@ function openEditModal(taskId) {
   const task = tasks.find(t => t.id === taskId);
   if (!task) return;
   document.getElementById("editId").value = task.id;
+  document.getElementById("editIdDisplay").textContent = `#${task.id}`;
   document.getElementById("editTitle").value = task.title;
   document.getElementById("editPriority").value = task.priority;
   document.getElementById("editOwner").value = task.owner;
@@ -1682,7 +1926,7 @@ function formatRelativeTime(date) {
 document.getElementById("btnPrevWeek").addEventListener("click", () => { const p = new Date(viewingMonday); p.setDate(p.getDate()-7); loadWeek(p); });
 document.getElementById("btnNextWeek").addEventListener("click", () => { const n = new Date(viewingMonday); n.setDate(n.getDate()+7); loadWeek(n); });
 document.getElementById("btnCurrentWeek").addEventListener("click", () => loadWeek(currentMonday));
-document.getElementById("btnNewWeek").addEventListener("click", () => startNextWeek());
+// Next Week button removed
 
 // ── Calendar Picker ──
 let calViewDate = new Date();
@@ -1789,10 +2033,124 @@ function calDayCell(dt, dayNum, isOtherMonth, todayStr, viewingMondayStr, curren
   return `<button class="${cls}" data-date="${dateStr}">${dayNum}</button>`;
 }
 
+// ── Settings Modal ──
+let settingsTab = "work";
+let settingsDraft = null;
+
+document.getElementById("btnSettings").addEventListener("click", async () => {
+  const settings = await api("GET", "/api/settings");
+  settingsDraft = JSON.parse(JSON.stringify(normalizeProjects(settings.projects || PROJECTS)));
+  settingsTab = currentMode;
+  renderSettingsModal();
+  document.getElementById("settingsModal").classList.add("show");
+  document.getElementById("settingsWorkTab").classList.toggle("active", settingsTab === "work");
+  document.getElementById("settingsPersonalTab").classList.toggle("active", settingsTab === "personal");
+});
+
+document.getElementById("settingsWorkTab").addEventListener("click", () => {
+  settingsTab = "work";
+  document.getElementById("settingsWorkTab").classList.add("active");
+  document.getElementById("settingsPersonalTab").classList.remove("active");
+  renderSettingsModal();
+});
+
+document.getElementById("settingsPersonalTab").addEventListener("click", () => {
+  settingsTab = "personal";
+  document.getElementById("settingsPersonalTab").classList.add("active");
+  document.getElementById("settingsWorkTab").classList.remove("active");
+  renderSettingsModal();
+});
+
+function renderSettingsModal() {
+  const list = document.getElementById("settingsProjectList");
+  const projects = settingsDraft[settingsTab] || {};
+  const keys = Object.keys(projects);
+  list.innerHTML = keys.map(key => {
+    const val = projects[key];
+    return `<div class="settings-project-row">
+      <div class="settings-color-dot" style="background:${val.color};">
+        <input type="color" value="${val.color}" data-key="${key}" class="settings-color-input">
+      </div>
+      <span class="settings-project-key">${escHtml(key)}</span>
+      <input type="text" value="${escHtml(val.label)}" data-key="${key}" class="settings-label-input">
+      <button class="settings-remove-btn" data-key="${key}" title="Remove">&#10005;</button>
+    </div>`;
+  }).join("") || '<div style="color:var(--text-secondary);font-style:italic;padding:12px 0;">No projects. Add one below.</div>';
+
+  list.querySelectorAll(".settings-color-input").forEach(input => {
+    input.addEventListener("input", () => {
+      settingsDraft[settingsTab][input.dataset.key].color = input.value;
+      input.closest(".settings-color-dot").style.background = input.value;
+    });
+  });
+  list.querySelectorAll(".settings-label-input").forEach(input => {
+    input.addEventListener("input", () => {
+      settingsDraft[settingsTab][input.dataset.key].label = input.value.trim();
+    });
+  });
+  list.querySelectorAll(".settings-remove-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      delete settingsDraft[settingsTab][btn.dataset.key];
+      renderSettingsModal();
+    });
+  });
+}
+
+document.getElementById("btnAddProject").addEventListener("click", () => {
+  const colorInput = document.getElementById("settingsNewColor");
+  const keyInput = document.getElementById("settingsNewKey");
+  const labelInput = document.getElementById("settingsNewLabel");
+  const key = keyInput.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "");
+  const label = labelInput.value.trim();
+  const color = colorInput.value;
+  if (!key || !label) return;
+  if (!settingsDraft[settingsTab]) settingsDraft[settingsTab] = {};
+  if (settingsDraft[settingsTab][key]) { showToast("Project key already exists"); return; }
+  settingsDraft[settingsTab][key] = { label, color };
+  const nextColor = DEFAULT_PALETTE[(Object.keys(settingsDraft[settingsTab]).length) % DEFAULT_PALETTE.length];
+  colorInput.value = nextColor;
+  colorInput.closest(".settings-color-dot").style.background = nextColor;
+  keyInput.value = "";
+  labelInput.value = "";
+  renderSettingsModal();
+});
+
+document.getElementById("settingsNewColor").addEventListener("input", function() {
+  this.closest(".settings-color-dot").style.background = this.value;
+});
+
+document.getElementById("btnCancelSettings").addEventListener("click", () => {
+  document.getElementById("settingsModal").classList.remove("show");
+});
+
+document.getElementById("btnSaveSettings").addEventListener("click", async () => {
+  // Collect latest values from inputs
+  document.querySelectorAll(".settings-label-input").forEach(input => {
+    if (settingsDraft[settingsTab][input.dataset.key]) {
+      settingsDraft[settingsTab][input.dataset.key].label = input.value.trim();
+    }
+  });
+  document.querySelectorAll(".settings-color-input").forEach(input => {
+    if (settingsDraft[settingsTab][input.dataset.key]) {
+      settingsDraft[settingsTab][input.dataset.key].color = input.value;
+    }
+  });
+  await api("PUT", "/api/settings", { key: "projects", value: settingsDraft });
+  PROJECTS = settingsDraft;
+  injectProjectStyles();
+  updateModeUI();
+  render();
+  document.getElementById("settingsModal").classList.remove("show");
+  showToast("Projects saved!");
+});
+
 // ── Init ──
-updateModeUI();
-setupDropZones();
-loadWeek(currentMonday);
+(async () => {
+  await loadSettings();
+  updateModeUI();
+  setupDropZones();
+  loadWeek(currentMonday);
+})();
 </script>
 </body>
 </html>

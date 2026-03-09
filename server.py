@@ -541,6 +541,55 @@ async def next_week(request: Request):
     return {"ok": True, "carried": carried, "weekKey": next_week_key}
 
 
+# ── Settings ──
+
+DEFAULT_PROJECTS = {
+    "work": {
+        "dragon": {"label": "Dragon", "color": "#7DBAA3"},
+        "raven": {"label": "Raven", "color": "#E8956F"},
+        "titan": {"label": "Titan", "color": "#D4A85C"},
+        "shadow": {"label": "Shadow", "color": "#8FA4B5"},
+        "crown": {"label": "Crown", "color": "#AD8EA5"},
+    },
+    "personal": {
+        "learning": {"label": "Learning", "color": "#8FA4B5"},
+        "sideproject": {"label": "Side Projects", "color": "#A0AD78"},
+        "health": {"label": "Health", "color": "#7DBAA3"},
+        "finance": {"label": "Finance", "color": "#D4A85C"},
+        "home": {"label": "Home", "color": "#B89C77"},
+    },
+}
+
+
+@app.get("/api/settings")
+def get_settings():
+    with get_db() as conn:
+        rows = conn.execute("SELECT key, value FROM settings").fetchall()
+    result = {r["key"]: json.loads(r["value"]) for r in rows}
+    # Ensure projects key always exists
+    if "projects" not in result:
+        result["projects"] = DEFAULT_PROJECTS
+    return result
+
+
+@app.put("/api/settings")
+async def update_settings(request: Request):
+    data = await request.json()
+    key = data.get("key")
+    value = data.get("value")
+    if not key or value is None:
+        raise HTTPException(400, "key and value required")
+
+    with get_db() as conn:
+        conn.execute(
+            """INSERT INTO settings (key, value, updated_at) VALUES (?, ?, datetime('now'))
+            ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at""",
+            (key, json.dumps(value)),
+        )
+        conn.commit()
+    return {"ok": True, "key": key}
+
+
 # ── Static files (serve index.html and assets) ──
 
 @app.get("/")
@@ -581,7 +630,7 @@ def init_db():
                 completed_day TEXT,
                 mode TEXT DEFAULT 'work',
                 created_at TEXT DEFAULT (datetime('now')),
-                FOREIGN KEY (week_key) REFERENCES weeks(week_key)
+                FOREIGN KEY (week_key, mode) REFERENCES weeks(week_key, mode)
             );
             CREATE TABLE IF NOT EXISTS activity_log (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -605,6 +654,11 @@ def init_db():
             CREATE INDEX IF NOT EXISTS idx_tasks_week ON tasks(week_key);
             CREATE INDEX IF NOT EXISTS idx_activity_date ON activity_log(date);
             CREATE INDEX IF NOT EXISTS idx_comments_task ON comments(task_id);
+            CREATE TABLE IF NOT EXISTS settings (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL,
+                updated_at TEXT DEFAULT (datetime('now'))
+            );
         """)
         # Migration: add columns if missing
         cols = [r[1] for r in conn.execute("PRAGMA table_info(tasks)").fetchall()]
@@ -632,12 +686,59 @@ def init_db():
             """)
             conn.execute("PRAGMA foreign_keys=ON")
 
+        # Migration: fix tasks FK to match composite weeks PK
+        fk_info = conn.execute("PRAGMA foreign_key_list(tasks)").fetchall()
+        needs_fk_fix = any(
+            row[2] == "weeks" and row[4] == "week_key"
+            for row in fk_info
+            if len([r for r in fk_info if r[2] == "weeks"]) == 1
+        )
+        if needs_fk_fix:
+            conn.execute("PRAGMA foreign_keys=OFF")
+            conn.executescript("""
+                ALTER TABLE tasks RENAME TO tasks_old;
+                CREATE TABLE tasks (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    week_key TEXT NOT NULL,
+                    project TEXT NOT NULL,
+                    title TEXT NOT NULL,
+                    priority TEXT DEFAULT 'medium',
+                    status TEXT DEFAULT 'todo',
+                    owner TEXT DEFAULT 'me',
+                    owner_label TEXT DEFAULT 'Me',
+                    due TEXT,
+                    notes TEXT DEFAULT '',
+                    subtasks TEXT DEFAULT '[]',
+                    files TEXT DEFAULT '[]',
+                    depends_on INTEGER,
+                    carried_over INTEGER DEFAULT 0,
+                    completed_day TEXT,
+                    mode TEXT DEFAULT 'work',
+                    created_at TEXT DEFAULT (datetime('now')),
+                    FOREIGN KEY (week_key, mode) REFERENCES weeks(week_key, mode)
+                );
+                INSERT INTO tasks SELECT * FROM tasks_old;
+                DROP TABLE tasks_old;
+            """)
+            conn.execute("PRAGMA foreign_keys=ON")
+
         conn.commit()
 
 
 def seed_initial_data():
     """Seed the current week with demo tasks if no data exists."""
     with get_db() as conn:
+        # Seed default projects if not configured
+        existing_settings = conn.execute(
+            "SELECT 1 FROM settings WHERE key = 'projects'"
+        ).fetchone()
+        if not existing_settings:
+            conn.execute(
+                "INSERT INTO settings (key, value) VALUES ('projects', ?)",
+                (json.dumps(DEFAULT_PROJECTS),),
+            )
+            conn.commit()
+
         row = conn.execute("SELECT COUNT(*) as c FROM weeks").fetchone()
         if row["c"] > 0:
             return
