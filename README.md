@@ -211,6 +211,13 @@ python -m unittest test_board.py -v
 
 ---
 
+## Upcoming
+
+- **Review Protocol** — diff viewer for agent changes, artifact previews inside the board, and approval gates so agents can't move past review without human sign-off
+- **MCP Server** — Small Council as an MCP tool so any compatible agent discovers the board automatically via protocol — no more copying `agent-rules.md`, just add the server URL
+
+---
+
 ## License
 
 MIT
